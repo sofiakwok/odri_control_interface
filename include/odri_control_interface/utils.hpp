@@ -23,6 +23,6 @@ std::shared_ptr<JointCalibrator> JointCalibratorFromYamlFile(
     const std::string& file_path, std::shared_ptr<JointModules> joints);
 std::shared_ptr<MasterBoardInterface> CreateMasterBoardInterface(
     const std::string &if_name, bool listener_mode = false);
-Eigen::VectorXd& PDFromYamlFile(
+std::shared_ptr<Eigen::VectorXd> PDFromYamlFile(
     const std::string& file_path);
 }  // namespace odri_control_interface

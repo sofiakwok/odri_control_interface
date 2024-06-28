@@ -252,18 +252,19 @@ std::shared_ptr<JointCalibrator> JointCalibratorFromYaml(
         joint_calibrator["dt"].as<double>());
 }
 
-Eigen::VectorXd& PDFromYaml(const YAML::Node& joint_gains)
+std::shared_ptr<Eigen::VectorXd> PDFromYaml(const YAML::Node& joint_gains)
 {
     assert_yaml_parsing(joint_gains, "joint_gains", "Kp");
     assert_yaml_parsing(joint_gains, "joint_gains", "Kd");
     assert_yaml_parsing(joint_gains, "joint_gains", "Kp_rw");
     assert_yaml_parsing(joint_gains, "joint_gains", "Kd_rw");
     VectorXd gains;
-    gains << joint_gains["Kp"].as<double>(),
-        joint_gains["Kd"].as<double>(),
-        joint_gains["Kp_rw"].as<double>(),
-        joint_gains["Kd_rw"].as<double>();
-    return gains;
+    gains.resize(4);
+    gains(0) = joint_gains["Kp"].as<double>();
+    gains(1) = joint_gains["Kd"].as<double>();
+    gains(2) = joint_gains["Kp_rw"].as<double>();
+    gains(3) = joint_gains["Kd_rw"].as<double>();
+    return std::make_shared<Eigen::VectorXd>(gains);
 }
 
 std::shared_ptr<Robot> RobotFromYamlFile(const std::string& if_name,
@@ -327,7 +328,7 @@ std::shared_ptr<MasterBoardInterface> CreateMasterBoardInterface(
     return std::make_shared<MasterBoardInterface>(if_name, listener_mode);
 }
 
-Eigen::VectorXd& PDFromYamlFile(const std::string& file_path)
+std::shared_ptr<Eigen::VectorXd> PDFromYamlFile(const std::string& file_path)
 {
     assert_file_exists(file_path);
     YAML::Node param = YAML::LoadFile(file_path);
